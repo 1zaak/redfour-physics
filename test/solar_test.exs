@@ -47,4 +47,24 @@ defmodule SolarTest do
     assert Solar.deadliest(flares) == 99000
     IO.puts "Deadliest flare: passed"
   end
+
+  test "total exposure", %{data: flares} do
+    assert Solar.total_exposure(flares) == 216911.7
+  end
+
+  test "sort exposure", %{data: flares} do
+    assert Solar.sort_exposure(flares) == [2.5, 3.2, 12, 58, 836, 45000, 72000, 99000]
+  end
+
+  test "total exposure (recursive)", %{data: flares} do
+    assert Solar.r_total_exposure(flares) == 216911.7
+  end
+
+  test "total exposure (reduce)", %{data: flares} do
+    assert Solar.reduce_total_exposure(flares) == 216911.7
+  end
+
+  test "total exposure (comprehension)", %{data: flares} do
+    assert Solar.c_total_exposure(flares) == 216911.7
+  end
 end
