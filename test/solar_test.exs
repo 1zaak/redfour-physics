@@ -67,4 +67,87 @@ defmodule SolarTest do
   test "total exposure (comprehension)", %{data: flares} do
     assert Solar.c_total_exposure(flares) == 216911.7
   end
+
+  test "flare power and deadliness", %{data: flares} do
+    assert Solar.flare_deadliness(flares) == [
+      power: 99000, is_deadly: true, 
+      power: 58.0, is_deadly: false, 
+      power: 12.0, is_deadly: false, 
+      power: 3.2, is_deadly: false,
+      power: 836.0, is_deadly: false, 
+      power: 2.5, is_deadly: false, 
+      power: 72000, is_deadly: true, 
+      power: 45000, is_deadly: true]
+  end
+
+  test "a list of flares using list of tuples", %{data: flares} do
+  result = Solar.flare_list(flares)
+  assert result == [
+    {:power, 99000, :is_deadly, true},
+    {:power, 58.0, :is_deadly, false},
+    {:power, 12.0, :is_deadly, false},
+    {:power, 3.2, :is_deadly, false},
+    {:power, 836.0, :is_deadly, false},
+    {:power, 2.5, :is_deadly, false},
+    {:power, 72000, :is_deadly, true},
+    {:power, 45000, :is_deadly, true}
+ ] 
+end
+
+test "a list of flares using list of tuples with label", %{data: flares} do
+  result = Solar.label_flare_list(flares)
+  assert result == [
+    {:flare, :power, 99000, :is_deadly, true},
+    {:flare, :power, 58.0, :is_deadly, false},
+    {:flare, :power, 12.0, :is_deadly, false},
+    {:flare, :power, 3.2, :is_deadly, false},
+    {:flare, :power, 836.0, :is_deadly, false},
+    {:flare, :power, 2.5, :is_deadly, false},
+    {:flare, :power, 72000, :is_deadly, true},
+    {:flare, :power, 45000, :is_deadly, true}
+ ] 
+end
+
+
+  test "a list of flares using list of maps", %{data: flares} do
+  result = Solar.maps_flare_list(flares)
+  assert result == [
+    %{power: 99000, is_deadly: true},
+    %{power: 58.0, is_deadly: false},
+    %{power: 12.0, is_deadly: false},
+    %{power: 3.2, is_deadly: false},
+    %{power: 836.0, is_deadly: false},
+    %{power: 2.5, is_deadly: false},
+    %{power: 72000, is_deadly: true},
+    %{power: 45000, is_deadly: true}
+ ] 
+end
+
+test "a list of flares using list of comprehension", %{data: flares} do
+  result = Solar.c_flare_list(flares)
+  assert result == [
+    %{power: 99000, is_deadly: true},
+    %{power: 58.0, is_deadly: false},
+    %{power: 12.0, is_deadly: false},
+    %{power: 3.2, is_deadly: false},
+    %{power: 836.0, is_deadly: false},
+    %{power: 2.5, is_deadly: false},
+    %{power: 72000, is_deadly: true},
+    %{power: 45000, is_deadly: true}
+ ] 
+end
+
+test "a list of flares using list of comprehension with 2 generators", %{data: flares} do
+  result = Solar.c_f_flare_list(flares)
+  assert result == [
+    %{power: 99000, is_deadly: true},
+    %{power: 58.0, is_deadly: false},
+    %{power: 12.0, is_deadly: false},
+    %{power: 3.2, is_deadly: false},
+    %{power: 836.0, is_deadly: false},
+    %{power: 2.5, is_deadly: false},
+    %{power: 72000, is_deadly: true},
+    %{power: 45000, is_deadly: true}
+ ] 
+end
 end
