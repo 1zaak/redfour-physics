@@ -2,18 +2,19 @@ defmodule SolarTest do
   # use ExUnit.Case, async: true
   use ExUnit.Case
   use Timex
-  doctest Solar
+  import Solar.Flare
+  doctest Solar.Flare
 
   setup do
     flares = [
-      %{classification: :X, scale: 99, date: Date.from({1859, 8, 29})},
-      %{classification: :M, scale: 5.8, date: Date.from({2015, 1, 12})},
-      %{classification: :M, scale: 1.2, date: Date.from({2015, 2, 9})},
-      %{classification: :C, scale: 3.2, date: Date.from({2015, 4, 18})},
-      %{classification: :M, scale: 83.6, date: Date.from({2015, 6, 23})},
-      %{classification: :C, scale: 2.5, date: Date.from({2015, 7, 4})},
-      %{classification: :X, scale: 72, date: Date.from({2012, 7, 23})},
-      %{classification: :X, scale: 45, date: Date.from({2003, 11, 4})},
+      %Solar.Flare{classification: :X, scale: 99, date: Timex.format!(Timex.date({1859, 8, 29}), "{YYYY}-{0M}-{D}")},
+      %Solar.Flare{classification: :M, scale: 5.8, date: Timex.format!(Timex.date({2015, 1, 12}), "{YYYY}-{0M}-{D}")},
+      %Solar.Flare{classification: :M, scale: 1.2, date: Timex.format!(Timex.date({2015, 2, 9}), "{YYYY}-{0M}-{D}")},
+      %Solar.Flare{classification: :C, scale: 3.2, date: Timex.format!(Timex.date({2015, 4, 18}), "{YYYY}-{0M}-{D}")},
+      %Solar.Flare{classification: :M, scale: 83.6, date: Timex.format!(Timex.date({2015, 6, 23}), "{YYYY}-{0M}-{D}")},
+      %Solar.Flare{classification: :C, scale: 2.5, date: Timex.format!(Timex.date({2015, 7, 4}), "{YYYY}-{0M}-{D}")},
+      %Solar.Flare{classification: :X, scale: 72, date: Timex.format!(Timex.date({2012, 7, 23}), "{YYYY}-{0M}-{D}")},
+      %Solar.Flare{classification: :X, scale: 45, date: Timex.format!(Timex.date({2003, 11, 4}), "{YYYY}-{0M}-{D}")}
     ]
     {:ok, data: flares}
   end
@@ -23,53 +24,52 @@ defmodule SolarTest do
   end
 
   test "solar flare classfication X" do
-    assert Solar.power(%{classification: :X, scale: 99}) == 99000 
-    IO.puts "Solar flare classification X passed"
+    assert power(%{classification: :X, scale: 99}) == 99000 
+    
   end
 
   test "solar flare classfication M" do
-    assert Solar.power(%{classification: :M, scale: 99}) == 990
-    IO.puts "Solar flare classification M passed"
+    assert power(%{classification: :M, scale: 99}) == 990
+    
   end
 
    test "solar flare classfication C" do
-    assert Solar.power(%{classification: :C, scale: 99}) == 99
-    IO.puts "Solar flare classification C passed"
+    assert power(%{classification: :C, scale: 99}) == 99
+    
   end
 
   test "go inside", %{data: flares} do
-     d = Solar.no_eva(flares) 
+     d = no_eva(flares) 
      assert length(d) == 3
-     IO.puts "Don't go out: passed"
+     
   end
 
   test "max solar flare", %{data: flares} do
-    assert Solar.deadliest(flares) == 99000
-    IO.puts "Deadliest flare: passed"
+    assert deadliest(flares) == 99000
   end
 
   test "total exposure", %{data: flares} do
-    assert Solar.total_exposure(flares) == 216911.7
+    assert total_exposure(flares) == 216911.7
   end
 
   test "sort exposure", %{data: flares} do
-    assert Solar.sort_exposure(flares) == [2.5, 3.2, 12, 58, 836, 45000, 72000, 99000]
+    assert sort_exposure(flares) == [2.5, 3.2, 12, 58, 836, 45000, 72000, 99000]
   end
 
   test "total exposure (recursive)", %{data: flares} do
-    assert Solar.r_total_exposure(flares) == 216911.7
+    assert r_total_exposure(flares) == 216911.7
   end
 
   test "total exposure (reduce)", %{data: flares} do
-    assert Solar.reduce_total_exposure(flares) == 216911.7
+    assert reduce_total_exposure(flares) == 216911.7
   end
 
   test "total exposure (comprehension)", %{data: flares} do
-    assert Solar.c_total_exposure(flares) == 216911.7
+    assert c_total_exposure(flares) == 216911.7
   end
 
   test "flare power and deadliness", %{data: flares} do
-    assert Solar.flare_deadliness(flares) == [
+    assert flare_deadliness(flares) == [
       power: 99000, is_deadly: true, 
       power: 58.0, is_deadly: false, 
       power: 12.0, is_deadly: false, 
@@ -81,7 +81,7 @@ defmodule SolarTest do
   end
 
   test "a list of flares using list of tuples", %{data: flares} do
-  result = Solar.flare_list(flares)
+  result = flare_list(flares)
   assert result == [
     {:power, 99000, :is_deadly, true},
     {:power, 58.0, :is_deadly, false},
@@ -95,7 +95,7 @@ defmodule SolarTest do
 end
 
 test "a list of flares using list of tuples with label", %{data: flares} do
-  result = Solar.label_flare_list(flares)
+  result = label_flare_list(flares)
   assert result == [
     {:flare, :power, 99000, :is_deadly, true},
     {:flare, :power, 58.0, :is_deadly, false},
@@ -110,7 +110,7 @@ end
 
 
   test "a list of flares using list of maps", %{data: flares} do
-  result = Solar.maps_flare_list(flares)
+  result = maps_flare_list(flares)
   assert result == [
     %{power: 99000, is_deadly: true},
     %{power: 58.0, is_deadly: false},
@@ -124,7 +124,7 @@ end
 end
 
 test "a list of flares using list of comprehension", %{data: flares} do
-  result = Solar.c_flare_list(flares)
+  result = c_flare_list(flares)
   assert result == [
     %{power: 99000, is_deadly: true},
     %{power: 58.0, is_deadly: false},
@@ -138,7 +138,7 @@ test "a list of flares using list of comprehension", %{data: flares} do
 end
 
 test "a list of flares using list of comprehension with 2 generators", %{data: flares} do
-  result = Solar.c_f_flare_list(flares)
+  result = c_f_flare_list(flares)
   assert result == [
     %{power: 99000, is_deadly: true},
     %{power: 58.0, is_deadly: false},
@@ -150,4 +150,31 @@ test "a list of flares using list of comprehension with 2 generators", %{data: f
     %{power: 45000, is_deadly: true}
  ] 
 end
+
+test "a solar flare is a map with a special key" do
+  %Solar.Flare{}.__struct__ 
+end
+
+test "load data into map", %{data: flares} do
+  assert load(flares) == [%Solar.Flare{classification: :X, date: "1859-08-29", is_deadly: true, power: 99000, scale: 99},
+            %Solar.Flare{classification: :M, date: "2015-01-12", is_deadly: false, power: 58.0, scale: 5.8},
+            %Solar.Flare{classification: :M, date: "2015-02-9", is_deadly: false, power: 12.0, scale: 1.2},
+            %Solar.Flare{classification: :C, date: "2015-04-18", is_deadly: false, power: 3.2, scale: 3.2},
+            %Solar.Flare{classification: :M, date: "2015-06-23", is_deadly: false, power: 836.0, scale: 83.6},
+            %Solar.Flare{classification: :C, date: "2015-07-4", is_deadly: false, power: 2.5, scale: 2.5},
+            %Solar.Flare{classification: :X, date: "2012-07-23", is_deadly: true, power: 72000, scale: 72},
+            %Solar.Flare{classification: :X, date: "2003-11-4", is_deadly: true, power: 45000, scale: 45}]
+end
+
+test "load data into map (comprehension)", %{data: flares} do
+  assert c_load(flares) == [%Solar.Flare{classification: :X, date: "1859-08-29", is_deadly: true, power: 99000, scale: 99},
+            %Solar.Flare{classification: :M, date: "2015-01-12", is_deadly: false, power: 58.0, scale: 5.8},
+            %Solar.Flare{classification: :M, date: "2015-02-9", is_deadly: false, power: 12.0, scale: 1.2},
+            %Solar.Flare{classification: :C, date: "2015-04-18", is_deadly: false, power: 3.2, scale: 3.2},
+            %Solar.Flare{classification: :M, date: "2015-06-23", is_deadly: false, power: 836.0, scale: 83.6},
+            %Solar.Flare{classification: :C, date: "2015-07-4", is_deadly: false, power: 2.5, scale: 2.5},
+            %Solar.Flare{classification: :X, date: "2012-07-23", is_deadly: true, power: 72000, scale: 72},
+            %Solar.Flare{classification: :X, date: "2003-11-4", is_deadly: true, power: 45000, scale: 45}]
+end
+
 end

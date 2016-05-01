@@ -1,14 +1,29 @@
-defmodule Solar do
+defmodule Solar.Flare do
   @moduledoc """
   1. Find total flare / total exposure in 4 ways: 1. Map, Sum 2. Recursion 3. Reduce 4. Comprehension
   """
-
+  defstruct [
+      classification: :M, 
+      scale: 0,
+      power: 0,
+      is_deadly: false,
+      date: nil      
+    ] 
 
   def power(%{classification: :X, scale: scale}), do: 1000 * scale
 
   def power(%{classification: :M, scale: scale}), do: 10 * scale
 
   def power(%{classification: :C, scale: scale}), do: 1 * scale
+
+  def calculate_power(flare) do
+    factor = case flare.classification do
+      :X -> 1000
+      :M -> 10
+      :C -> 1
+    end
+    %{flare | power: flare.scale * factor}
+  end
   
   def no_eva(flares) do
     Enum.filter flares, &(power(&1) > 1000)   
@@ -18,8 +33,6 @@ defmodule Solar do
     Enum.map(flares, &(power(&1)))
     |> Enum.max
   end
-
-
   
   @doc """
   1. Map & Sum
@@ -77,6 +90,10 @@ defmodule Solar do
       |> List.flatten
   end
 
+  def calculate_deadliness(flare) do
+      %{flare | is_deadly: flare.power > 1000 }
+  end
+
   @doc """
   Calculate flare power and deadliness (tuple)
   """
@@ -116,5 +133,23 @@ defmodule Solar do
   """
   def c_f_flare_list(flares) do
     for flare <- flares, power <- [power(flare)], is_deadly <- [power > 1000], do: %{power: power, is_deadly: is_deadly}
+  end
+
+  @doc """
+  Load data into map
+  """
+  def load(flares) do
+    # updated_map = %{map | key: "val"}
+    # updated_map = Map.put(map, :key, "val")
+    # map = Map.put_new(map, :new_key, "value")
+    Enum.map flares, fn(flare) ->
+   flare
+   |> calculate_power
+   |> calculate_deadliness
+  end
+  end
+
+  def c_load(flares) do
+    for flare <- flares, do: flare |> calculate_power |> calculate_deadliness
   end
 end
