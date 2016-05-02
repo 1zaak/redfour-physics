@@ -2,63 +2,40 @@ defmodule Physics.Rocketry do
 
   import Calcs
   import Physics.Laws
-  import Planets_Moons
+  import Planet
 
-  def escape_velocity(:earth) do
-    #Earth's Mass = 5.972e24
-    earth
-      |> escape_velocity
-  end
-
-  def escape_velocity(planet) when is_map(planet) do
-    planet
-      |> calculate_escape
-      |> to_km
-      |> to_nearest_tenth
-  end
-
-  def escape_velocity(:mars) do
-    mars
-      |> calculate_escape
-      |> to_km
-      |> to_nearest_tenth
-  end
-
-  def escape_velocity(:moon) do
-    moon
-      |> calculate_escape
-      |> to_km
-      |> to_nearest_tenth
-  end
-
-  def orbital_speed(height) do
-    newtons_gravitational_constant * earth.mass / orbital_radius(height)
-  end
+  @earth select[:earth]
+  @mars select[:mars]
+  @moon select[:moon]
+  @mercury select[:mercury]
+  @venus select[:venus]
+  @jupiter select[:jupiter]
+  @saturn select[:saturn]
+  @uranus select[:uranus]
+  @neptune select[:neptune]
 
   def orbital_acceleration(height) do
     (orbital_speed(height) |> squared) / orbital_radius(height)
   end
 
+  def orbital_speed(height) do
+    newtons_gravitational_constant * select[:earth].mass / orbital_radius(height) 
+    |> square_root
+  end
+
   def orbital_term(height) do
-    4 * (:math.pi |> squared) * (orbital_radius(height) |> cubed) / (newtons_gravitational_constant * earth.mass)
+    4 * (:math.pi |> squared) * (orbital_radius(height) |> cubed) / (newtons_gravitational_constant * select[:earth].mass)
     |> square_root
     |> seconds_to_hours
   end
 
-  def find_height(orbital_term_hours, :earth) do
-    (newtons_gravitational_constant * earth[:mass] * (orbital_term_hours |> squared)) / (4 * (:math.pi |> squared))
+  def find_height(orbital_term_hours, planet) do
+    (newtons_gravitational_constant * select[planet].mass * (orbital_term_hours |> squared)) / (4 * (:math.pi |> squared))
     |> cube_root
   end
 
-  defp calculate_escape(%{mass: mass, radius: radius}) do
-    # 2 * 6.67e-11 * 5.972e24 (Earth's mass) / 6.37e6 (Earth's radius)
-    # 2 * -51450865.541591791 * 22501488.1662211464 / 14065372.891919538 = 14065372.891919538
-    2 * newtons_gravitational_constant * mass / radius
-      |> square_root
-  end
-
   defp orbital_radius(height) do
-    earth.radius + (height |> to_m)
+    select[:earth].radius + (height |> to_m) 
   end
 
 end
