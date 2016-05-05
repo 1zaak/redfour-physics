@@ -17,32 +17,40 @@ defmodule PgTest do
   {:ok, data: flares}
 end
 
-  test "Connecting with Postgrex", %{data: flares} do
-    {:ok, pid} = Postgrex.start_link(hostname: "localhost", database: "redfour")
+  # test "Connecting with Postgrex", %{data: flares} do
+  #   {:ok, pid} = Postgrex.start_link(hostname: "localhost", database: "redfour")
 
-    sql = """
-    insert into solar_flares(classification, scale, date)
-    values($1, $2, $3)
-    """
+  #   sql = """
+  #   insert into solar_flares(classification, scale, date)
+  #   values($1, $2, $3)
+  #   """
 
     
-    res = Enum.map flares, fn(flare) -> 
-    ts = %Postgrex.Timestamp{year: flare.date.year, month: flare.date.month, day: flare.date.day}
-    Postgrex.query!(pid, sql, [Atom.to_string(flare.classification), flare.scale, ts])
-    end
-    # res = Postgrex.query!(pid, "SELECT * FROM solar_flares", [])
-    IO.inspect res
-    # Postgrex.close!(pid, res)
-  end
-
-  #  test "test date.year", %{data: flares}  do
-  #   Enum.map flares, fn(flare) -> 
-  #     year = Timex.to_date(flare.date)
-  #     assert year.year == 1
+  #   res = Enum.map flares, fn(flare) -> 
+  #   ts = %Postgrex.Timestamp{year: flare.date.year, month: flare.date.month, day: flare.date.day}
+  #   Postgrex.query!(pid, sql, [Atom.to_string(flare.classification), flare.scale, ts])
   #   end
+    
+  #   IO.inspect res
     
   # end
 
-   
+  test "Querying Postgrex", %{data: flares} do
+    {:ok, pid} = Postgrex.start_link(hostname: "localhost", database: "redfour")
+    sql = """
+     select * from solar_flares
+    """
+    res = Postgrex.query!(pid, sql, []) |> transform_result
+    IO.inspect res    
+  end
+
+   def transform_result(result) do
+     for row <- result.rows, do: List.zip([result.columns, row])
+   end
+
+   def transform_result(result) do
+  atomized = for col <- result.columns, do: String.to_atom(col)
+  for row <- result.rows, do: final = List.zip([atomized, row]) |> Enum.into(%{})
+end
     
 end
