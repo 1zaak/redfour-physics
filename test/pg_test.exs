@@ -45,12 +45,8 @@ end
   end
 
    def transform_result(result) do
-     for row <- result.rows, do: List.zip([result.columns, row])
-   end
-
-   def transform_result(result) do
   atomized = for col <- result.columns, do: String.to_atom(col)
-  for row <- result.rows, do: final = List.zip([atomized, row]) |> Enum.into(%{})
+  for row <- result.rows, do: List.zip([atomized, row]) |> Enum.into(%{})
 end
     
 end
