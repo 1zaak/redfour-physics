@@ -35,18 +35,18 @@ end
     
   # end
 
-  test "Querying Postgrex", %{data: flares} do
-    {:ok, pid} = Postgrex.start_link(hostname: "localhost", database: "redfour")
-    sql = """
-     select * from solar_flares
-    """
-    res = Postgrex.query!(pid, sql, []) |> transform_result
-    IO.inspect res    
-  end
+#   test "Querying Postgrex", %{data: flares} do
+#     {:ok, pid} = Postgrex.start_link(hostname: "localhost", database: "redfour")
+#     sql = """
+#      select * from solar_flares
+#     """
+#     res = Postgrex.query!(pid, sql, []) |> transform_result
+#     IO.inspect res    
+#   end
 
-   def transform_result(result) do
-  atomized = for col <- result.columns, do: String.to_atom(col)
-  for row <- result.rows, do: List.zip([atomized, row]) |> Enum.into(%{})
-end
+#    def transform_result(result) do
+#   atomized = for col <- result.columns, do: String.to_atom(col)
+#   for row <- result.rows, do: List.zip([atomized, row]) |> Enum.into(%{})
+# end
     
 end

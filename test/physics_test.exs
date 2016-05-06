@@ -9,7 +9,7 @@ defmodule PhysicsTest do
 
   test "height > 100km in 4 hours" do
       assert Physics.Rocketry.find_height(4, :earth) > 100 #54451
-      IO.puts "height > 100km in 4 hours passed"
+      # IO.puts "height > 100km in 4 hours passed"
   end
 
   # test "orbital speed" do
