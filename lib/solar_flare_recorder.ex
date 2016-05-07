@@ -32,10 +32,10 @@ defmodule SolarFlareRecorder do
 
   defp add_flare(flare) do
     """
-      insert into solar_flares(classification, scale, date)
-      values($1, $2, now()) RETURNING *;
+      insert into solar_flares(index, classification, scale, date)
+      values($1, $2, $3, now()) RETURNING *;
     """
-    |> execute([Atom.to_string(flare.classification), flare.scale])
+    |> execute([flare.index, flare.classification, flare.scale])
   end
 
   defp get_flares do
